@@ -20,7 +20,6 @@ class _TutorialViewState extends State<TutorialView> {
   final _descController = TextEditingController();
   late TutorialModel _item;
   bool _isNew = false;
-  bool _isLoading = false;
 
   @override
   void initState() {
@@ -84,13 +83,13 @@ class _TutorialViewState extends State<TutorialView> {
   }
 
   void _create() async {
-    setState(() => _isLoading = true);
-
     if (_formKey.currentState != null && _formKey.currentState!.validate()) {
       _formKey.currentState?.save();
 
-      TutorialModel val =
-          TutorialModel(_titleController.text, _descController.text);
+      TutorialModel val = TutorialModel(
+        title: _titleController.text,
+        description: _descController.text,
+      );
 
       if (_isNew) {
         _insert(val);
@@ -99,8 +98,6 @@ class _TutorialViewState extends State<TutorialView> {
         _update(val);
       }
     }
-
-    setState(() => _isLoading = false);
   }
 
   void _delete() {

@@ -22,18 +22,6 @@ class _HomeViewState extends State<HomeView> {
   void initState() {
     super.initState();
 
-    _search();
-    _refresh();
-  }
-
-  @override
-  void dispose() {
-    _db.close();
-
-    super.dispose();
-  }
-
-  void _search() {
     _searchController.addListener(() {
       setState(() {
         _isNotEmpty = _searchController.text.isNotEmpty;
@@ -51,6 +39,15 @@ class _HomeViewState extends State<HomeView> {
         }
       });
     });
+
+    _refresh();
+  }
+
+  @override
+  void dispose() {
+    _db.close();
+
+    super.dispose();
   }
 
   void _refresh() {
@@ -69,42 +66,43 @@ class _HomeViewState extends State<HomeView> {
 
   void _delete({int? id}) async {
     showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: const Text('Delete Permanently'),
-            content: const SingleChildScrollView(
-              child: ListBody(
-                children: [
-                  Text('Are you sure to delete this item?'),
-                ],
-              ),
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Delete Permanently'),
+          content: const SingleChildScrollView(
+            child: ListBody(
+              children: [
+                Text('Are you sure to delete this item?'),
+              ],
             ),
-            actions: [
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  foregroundColor: Colors.white,
+          ),
+          actions: [
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                foregroundColor: Colors.white,
+                backgroundColor: Colors.redAccent,
+              ),
+              onPressed: () async {
+                await _db.deleteTutorial(id!);
+                if (!context.mounted) return;
+                Navigator.pop(context);
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                  content: Text('Item successfully deleted.'),
                   backgroundColor: Colors.redAccent,
-                ),
-                onPressed: () async {
-                  await _db.deleteTutorial(id!);
-                  if (!context.mounted) return;
-                  Navigator.pop(context);
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                    content: Text('Item successfully deleted.'),
-                    backgroundColor: Colors.redAccent,
-                  ));
-                  _refresh();
-                },
-                child: const Text('Yes'),
-              ),
-              ElevatedButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text('No'),
-              ),
-            ],
-          );
-        });
+                ));
+                _refresh();
+              },
+              child: const Text('Yes'),
+            ),
+            ElevatedButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('No'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override

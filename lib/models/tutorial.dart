@@ -3,7 +3,7 @@ class TutorialModel {
   String? title;
   String? description;
 
-  TutorialModel(this.title, this.description, {this.id});
+  TutorialModel({this.id, this.title, this.description});
 
   TutorialModel.fromJson(Map<String, dynamic> map) {
     id = map['id'];
@@ -13,6 +13,7 @@ class TutorialModel {
 
   Map<String, dynamic> toJson() {
     return {
+      'id': id,
       'title': title,
       'description': description,
     };
